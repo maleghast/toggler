@@ -1,0 +1,4 @@
+{"berliner" : {"foo" : "bar",
+               "bam" : "baz"},
+ "tabloid" : {"foo" : "baz",
+              "bam" : "bar"}}
