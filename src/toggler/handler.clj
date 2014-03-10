@@ -7,40 +7,75 @@
 
 (def cfg (atom (decode (slurp "resources/config.json") true)))
 
-(defn getoggleall [component]
-  (get @cfg (keyword component)))
+(defn getoggle
+  ([] @cfg)
+  ([component] (get @cfg (keyword component)))
+  ([component setting] (get-in @cfg [(keyword component) (keyword setting)])))
 
-(defn getoggle [component setting]
-  (get-in @cfg [(keyword component) (keyword setting)]))
+(defn setoggle [component setting newval]
+  (swap! cfg assoc-in [(keyword component) (keyword setting)] newval))
+
+(defn reload-config [config]
+  (reset! cfg config))
 
 (defresource status
   :allowed-methods [:get]
   :available-media-types ["application/json"]
   :handle-ok "Toggler - This is not a functional endpoint; Sorry! :-(")
 
-(defresource get-toggle [component setting]
+(defresource get-toggle-for-component-and-setting [component setting]
   :allowed-methods [:get]
   :available-media-types ["application/json"]
-  :handle-ok (fn [_] (getoggle component setting)))
+  :exists? (fn [_] (let [e (getoggle component setting)]
+                    (if-not (nil? e)
+                      {::entry e})))
+  :handle-ok ::entry)
 
-(defresource get-toggle-all [component]
+(defresource get-toggle-all-for-component [component]
   :allowed-methods [:get]
   :available-media-types ["application/json"]
-  :handle-ok (fn [_] (getoggleall component)))
+  :exists? (fn [_] (let [e (getoggle component)]
+                    (if-not (nil? e)
+                      {::entry e})))
+  :handle-ok ::entry)
 
-(comment
-  (defresource set-toggle [component setting]
+(defresource get-toggle-all
+  :allowed-methods [:get]
+  :available-media-types ["application/json"]
+  :handle-ok (fn [_] (getoggle)))
+
+(defresource set-toggle [component setting newval]
   :allowed-mothods [:put]
-  :available-media-types ["application/json"]))
+  :available-media-types ["application/json"]
+  :exists? (fn [_] (let [e (getoggle component setting)]
+                    (if-not (nil? e)
+                      {::entry e})))
+  :can-put-to-missing? false
+  :put! (fn [_] (setoggle component setting newval))
+  :handle-ok true)
+
+(defresource reconfigure [config]
+  :allowed-mothods [:put]
+  :available-media-types ["application/json"]
+  :exists? (fn [_] (let [e @cfg]
+                    (if-not (nil? e)
+                      {::entry e})))
+  :can-put-to-missing? false
+  :put! (fn [_] (reload-config config))
+  :handle-ok true)
 
 (defroutes app-routes
   (GET "/" [] status)
-  (GET "/toggle/:component" [component] (get-toggle-all component))
-  (GET "/toggle/:component/:setting" [component setting] (get-toggle component setting))
-  (comment (PUT "/toggle/:component/:setting" [component setting value] (set-toggle component setting value)))
-  (comment (POST "/toggle/new" {params :form-params} (create-toggle params)))
+  (PUT "/reconfigure" {body :body} (let [bodydecoded (decode (slurp body) true)]
+                                     (reload-config bodydecoded)))
+  (GET "/toggle" [] get-toggle-all)
+  (GET "/toggle/:component" [component] (get-toggle-all-for-component component))
+  (GET "/toggle/:component/:setting" [component setting] (get-toggle-for-component-and-setting component setting))
+  (PUT "/toggle" {body :body} (let [bodydecoded (decode (slurp body) true)]
+                                (setoggle (get bodydecoded :component) (get bodydecoded :setting) (get bodydecoded :newval))))
+  (comment (POST "/toggle" {body :body} (create-toggle body)))
   (route/not-found "Not Found")
   (route/resources "/"))
 
 (def app
-  (handler/site app-routes))
+  (handler/api app-routes))
