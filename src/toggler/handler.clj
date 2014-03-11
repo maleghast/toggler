@@ -5,7 +5,10 @@
             [liberator.core :refer [resource defresource]]
             [cheshire.core :refer :all]))
 
-(def cfg (atom (decode (slurp "resources/config.json") true)))
+(defn read-default-config []
+  (decode (slurp "resources/config.json") true))
+
+(def cfg (atom (read-default-config)))
 
 (defn getoggle
   ([] @cfg)
@@ -17,6 +20,9 @@
 
 (defn reload-config [config]
   (reset! cfg config))
+
+(defn reset-cfg []
+  (reload-config read-default-config))
 
 (defresource status
   :allowed-methods [:get]
@@ -68,6 +74,7 @@
   (GET "/" [] status)
   (PUT "/reconfigure" {body :body} (let [bodydecoded (decode (slurp body) true)]
                                      (reload-config bodydecoded)))
+  (GET "/reset" [] (reset-cfg))
   (GET "/toggle" [] get-toggle-all)
   (GET "/toggle/:component" [component] (get-toggle-all-for-component component))
   (GET "/toggle/:component/:setting" [component setting] (get-toggle-for-component-and-setting component setting))
