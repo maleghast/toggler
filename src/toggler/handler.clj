@@ -58,7 +58,7 @@
                       {::entry e})))
   :can-put-to-missing? false
   :put! (fn [_] (setoggle component setting newval))
-  :handle-ok true)
+  :handle-ok (encode newval))
 
 (defresource reconfigure [config]
   :allowed-methods [:put]
@@ -68,13 +68,23 @@
                       {::entry e})))
   :can-put-to-missing? false
   :put! (fn [_] (reload-config config))
+  :handle-ok (encode config))
+
+(defresource reset-config
+  :allowed-methods [:put]
+  :available-media-types ["application/json"]
+  :exists? (fn [_] (let [e @cfg]
+                    (if-not (nil? e)
+                      {::entry e})))
+  :can-put-to-missing? false
+  :put! (fn [_] (reset-cfg))
   :handle-ok true)
 
 (defroutes app-routes
   (GET "/" [] status)
   (PUT "/reconfigure" {body :body} (let [bodydecoded (decode (slurp body) true)]
-                                     (reload-config bodydecoded)))
-  (GET "/reset" [] (reset-cfg))
+                                     (reconfigure bodydecoded)))
+  (PUT "/reset" [] reset-config)
   (GET "/toggle" [] get-toggle-all)
   (GET "/toggle/:component" [component] (get-toggle-all-for-component component))
   (GET "/toggle/:component/:setting" [component setting] (get-toggle-for-component-and-setting component setting))
