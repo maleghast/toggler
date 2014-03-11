@@ -51,7 +51,7 @@
   :handle-ok (fn [_] (getoggle)))
 
 (defresource set-toggle [component setting newval]
-  :allowed-mothods [:put]
+  :allowed-methods [:put]
   :available-media-types ["application/json"]
   :exists? (fn [_] (let [e (getoggle component setting)]
                     (if-not (nil? e)
@@ -61,7 +61,7 @@
   :handle-ok true)
 
 (defresource reconfigure [config]
-  :allowed-mothods [:put]
+  :allowed-methods [:put]
   :available-media-types ["application/json"]
   :exists? (fn [_] (let [e @cfg]
                     (if-not (nil? e)
@@ -79,7 +79,7 @@
   (GET "/toggle/:component" [component] (get-toggle-all-for-component component))
   (GET "/toggle/:component/:setting" [component setting] (get-toggle-for-component-and-setting component setting))
   (PUT "/toggle" {body :body} (let [bodydecoded (decode (slurp body) true)]
-                                (setoggle (get bodydecoded :component) (get bodydecoded :setting) (get bodydecoded :newval))))
+                                (set-toggle (get bodydecoded :component) (get bodydecoded :setting) (get bodydecoded :newval))))
   (comment (POST "/toggle" {body :body} (create-toggle body)))
   (route/not-found "Not Found")
   (route/resources "/"))
