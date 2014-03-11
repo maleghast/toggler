@@ -22,7 +22,7 @@
   (reset! cfg config))
 
 (defn reset-cfg []
-  (reload-config read-default-config))
+  (reload-config (read-default-config)))
 
 (defresource status
   :allowed-methods [:get]
