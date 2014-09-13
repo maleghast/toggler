@@ -8,5 +8,7 @@
                  [ring "1.3.1"]]
   :plugins [[lein-ring "0.8.10"]]
   :ring {:handler toggler.handler/app}
+  :resource-paths ["src/toggler/resources"]
+  :main toggler.handler
   :profiles
   {:dev {:dependencies [[ring-mock "0.1.5"]]}})

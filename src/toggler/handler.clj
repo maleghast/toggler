@@ -3,10 +3,13 @@
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
             [liberator.core :refer [resource defresource]]
-            [cheshire.core :refer :all]))
+            [cheshire.core :refer :all]
+            [ring.adapter.jetty :refer (run-jetty)]
+            [clojure.java.io :as io])
+  (:gen-class))
 
 (defn read-default-config []
-  (decode (slurp "resources/config.json") true))
+  (decode (slurp (io/resource "config.json")) true))
 
 (def cfg (atom (read-default-config)))
 
@@ -96,3 +99,6 @@
 
 (def app
   (handler/api app-routes))
+
+(defn -main [& args]
+  (run-jetty app {:port 7000 :join? false}))
