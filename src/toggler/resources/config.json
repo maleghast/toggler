@@ -1,4 +1,8 @@
-{"berliner" : {"foo" : "bar",
-               "bam" : "baz"},
- "tabloid" : {"foo" : "baz",
-              "bam" : "bar"}}
+{
+  "app1" : {
+      "cache" : "true",
+      "a-b-test" : "true"},
+  "app2" : {
+      "cache" : "false",
+      "a-b-test" : "false"}
+}
