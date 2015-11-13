@@ -10,12 +10,12 @@ You will need [Leiningen][1] 1.7.0 or above installed.
 
 ##Running##
 
-To start a web server for the application, run:
+To start the application using Jetty, run:
 
-    lein ring server
+    lein run
 
 =======
 Toggler
 =======
 
-Cloud-Based alternative to Flagpoles
+A Clojure Feature-Toggle Service
