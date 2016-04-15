@@ -11,6 +11,9 @@
 (defn read-default-config []
   (decode (slurp (io/resource "config.json")) true))
 
+(defn read-custom-config [filename]
+  (decode (slurp (str "custom-config/" filename ".json")) true))
+
 (def cfg (atom (read-default-config)))
 
 (def backup-counter (atom 0))
@@ -28,14 +31,14 @@
    (swap! cfg assoc component-name component-toggles))
   ([component setting newval]
   (let [toggle-map (get @cfg (keyword component))]
-    (swap! cfg assoc-in [(keyword component)] (assoc toggle-map (keyword setting) newval))))
-  )
+    (swap! cfg assoc-in [(keyword component)] (assoc toggle-map (keyword setting) newval)))))
 
 (defn reload-config [config]
   (reset! cfg config))
 
-(defn reset-cfg []
-  (reload-config (read-default-config)))
+(defn reset-cfg
+  ([] (reload-config (read-default-config)))
+  ([filename] (reload-config (read-custom-config filename))))
 
 (defn backup-config []
   (spit
@@ -137,11 +140,19 @@
   :post! (fn [_] (saveconfig filename))
   :handle-ok (encode {:filename filename}) )
 
+(defresource load-config-from-file [filename]
+ :allowed-methods [:post]
+  :available-media-types ["application/json"]
+  :post! (fn [_] (reset-cfg filename))
+  :handle-ok (encode {:filename filename}) )
+
 (defroutes app-routes
   (GET "/" [] status)
   (PUT "/reconfigure" {body :body} (let [bodydecoded (decode (slurp body) true)]
                                      (reconfigure bodydecoded)))
   (PUT "/reset" [] reset-config)
+  (POST "/reset" {body :body} (let [bodydecoded (decode (slurp body) true)]
+                               (load-config-from-file (get bodydecoded :filename))))
   (PUT "/save" [] save-config)
   (POST "/save" {body :body} (let [bodydecoded (decode (slurp body) true)]
                                (save-config-to-file (get bodydecoded :filename))))
