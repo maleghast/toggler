@@ -21,15 +21,22 @@
 (defn setoggle [component setting newval]
   (swap! cfg assoc-in [(keyword component) (keyword setting)] newval))
 
-(defn createtoggle [component setting newval]
+(defn createtoggle
+  ([component-name component-toggles]
+   (swap! cfg assoc component-name component-toggles))
+  ([component setting newval]
   (let [toggle-map (get @cfg (keyword component))]
-       (swap! cfg assoc-in [(keyword component)] (assoc toggle-map (keyword setting) newval))))
+    (swap! cfg assoc-in [(keyword component)] (assoc toggle-map (keyword setting) newval))))
+  )
 
 (defn reload-config [config]
   (reset! cfg config))
 
 (defn reset-cfg []
   (reload-config (read-default-config)))
+
+(defn modify-keys [f m]
+  (zipmap (map f (keys m)) (vals m)))
 
 (defresource status
   :allowed-methods [:get]
@@ -73,6 +80,12 @@
   :post! (fn [_] (createtoggle component setting newval))
   :handle-ok (encode {:component component :setting setting :newval newval}))
 
+(defresource create-toggles-component [component-name component-toggles]
+  :allowed-methods [:post]
+  :available-media-types ["application/json"]
+  :post! (fn [_] (createtoggle component-name component-toggles))
+  :handle-ok (encode {:component-name component-name :component-toggles component-toggles}))
+
 (defresource reconfigure [config]
   :allowed-methods [:put]
   :available-media-types ["application/json"]
@@ -104,7 +117,9 @@
   (PUT "/toggle" {body :body} (let [bodydecoded (decode (slurp body) true)]
                                 (set-toggle (get bodydecoded :component) (get bodydecoded :setting) (get bodydecoded :newval))))
   (POST "/toggle" {body :body} (let [bodydecoded (decode (slurp body) true)]
-                                 (create-toggle (get bodydecoded :component) (get bodydecoded :setting) (get bodydecoded :newval))))
+                                 (if (= (count bodydecoded) 3)
+                                   (create-toggle (get bodydecoded :component) (get bodydecoded :setting) (get bodydecoded :newval))
+                                   (create-toggles-component (keyword (get bodydecoded :component-name)) (get bodydecoded :component-toggles)))))
   (route/not-found "Not Found")
   (route/resources "/"))
 
