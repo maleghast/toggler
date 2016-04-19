@@ -18,6 +18,12 @@
 
 (def backup-counter (atom 0))
 
+(comment
+  The following "def" needs to be set by the user of the service
+  on deployment, and then that token needs to be included in the
+  headers of each request)
+(def secret "secret")
+
 (defn getoggle
   ([] @cfg)
   ([component] (get @cfg (keyword component)))
@@ -52,9 +58,6 @@
    (spit (io/resource "config.json") (encode @cfg)))
   ([filename]
    (spit (str "custom-config/" filename ".json") (encode @cfg))))
-
-(defn modify-keys [f m]
-  (zipmap (map f (keys m)) (vals m)))
 
 (defresource status
   :allowed-methods [:get]
