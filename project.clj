@@ -1,4 +1,4 @@
-(defproject toggler "1.0.0"
+(defproject toggler "1.1.1"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :dependencies [[org.clojure/clojure "1.8.0"]
