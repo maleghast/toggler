@@ -18,12 +18,6 @@
 
 (def backup-counter (atom 0))
 
-(comment
-  The following "def" needs to be set by the user of the service
-  on deployment, and then that token needs to be included in the
-  headers of each request)
-(def secret "secret")
-
 (defn getoggle
   ([] @cfg)
   ([component] (get @cfg (keyword component)))
