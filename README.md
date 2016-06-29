@@ -1,5 +1,7 @@
 #Toggler#
 
+##A Feature Toggle Micro Service written in Clojure##
+
 A few years ago, when I was contracting at the BBC I came across a feature of their
 "Forge" platform called Flagpoles.  These Flagpoles were supposed to be used to
 announce the status of services and applications in order to let developers who were
@@ -21,9 +23,9 @@ development teams to turn toggles on and off without having to deploy code.
 
 Toggler was the result.
 
-One day I might actually work for an organisation that will let me use it...
+I am even about to use it in Production!
 
-In the meantime I leave it here as a reminder of how versatile Clojure is as a language,
+I offer it here as a reminder of how versatile Clojure is as a language,
 and as what is I hope a reasonably good example of how to use Clojure and Liberator to
 construct a basic REST-based web service.
 
@@ -60,8 +62,28 @@ To start the application using Jetty, without compiling the code into a .jar, si
 
     lein run
 
-=======
-Toggler
-=======
+If you want to run the .jar and have no interest in installing Clojure, Leiningen etc, try:
 
-A Clojure Feature-Toggle Service
+    java -jar toggler-1.x.x-standalone.jar
+
+##Using the Service##
+
+I recommend [Postman][https://www.getpostman.com/], but grab the REST Client of your choice
+and poke the API:
+
+    GET http://127.0.0.1:7000/toggle
+
+and see all the default / example feature toggles.
+
+    GET http://127.0.0.1:7000/toggle/app1
+
+and see all the toggles for "app1"
+
+    GET http://127.0.0.1:7000/toggle/app1/cache
+
+and get the value of the "cache" feature toggle in "app1"
+
+You can see where this is going, I hope...
+
+There are PUT and POST options to add new components and toggles, have a play around with it.
+
