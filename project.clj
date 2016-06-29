@@ -1,6 +1,6 @@
-(defproject toggler "1.1.1"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject toggler "1.1.2"
+  :description "Toggler - A Feature Toggle Service written in Clojure"
+  :url "https://github.com/maleghast/toggler"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [liberator "0.14.1"]
                  [compojure "1.5.0"]
