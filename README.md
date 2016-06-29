@@ -68,8 +68,10 @@ If you want to run the .jar and have no interest in installing Clojure, Leininge
 
 ##Using the Service##
 
-I recommend [Postman][https://www.getpostman.com/], but grab the REST Client of your choice
+I recommend [Postman][2], but grab the REST Client of your choice
 and poke the API:
+
+[2]: https://www.getpostman.com/
 
     GET http://127.0.0.1:7000/toggle
 
