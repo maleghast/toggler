@@ -1,4 +1,4 @@
-(defproject toggler "1.1.2"
+(defproject toggler "1.1.3"
   :description "Toggler - A Feature Toggle Service written in Clojure"
   :url "https://github.com/maleghast/toggler"
   :dependencies [[org.clojure/clojure "1.8.0"]
