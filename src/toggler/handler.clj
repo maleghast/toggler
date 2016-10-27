@@ -8,15 +8,17 @@
             [clojure.java.io :as io])
   (:gen-class))
 
-(defn read-default-config []
-  (decode (slurp (io/resource "config.json")) true))
+(def backup-counter (atom 0))
 
-(defn read-custom-config [filename]
-  (decode (slurp (str "custom-config/" filename ".json")) true))
+(def filepath (atom "/code/toggler-configs/"))
+
+(defn read-default-config []
+  (decode (slurp (str @filepath "config.json")) true))
 
 (def cfg (atom (read-default-config)))
 
-(def backup-counter (atom 0))
+(defn read-custom-config [filename]
+  (decode (slurp (str @filepath (str filename ".json"))) true))
 
 (defn getoggle
   ([] @cfg)
@@ -41,17 +43,21 @@
   ([filename] (reload-config (read-custom-config filename))))
 
 (defn backup-config []
-  (spit
-   (str "custom-config/backup-" @backup-counter ".json")
-   (slurp (io/resource "config.json")))
+  (if (.exists (clojure.java.io/as-file (str @filepath (str "backup-" @backup-counter ".json"))))
+    (spit
+      (str @filepath (str "backup-" @backup-counter ".json"))
+      (slurp (io/file @filepath (str "backup-" (- @backup-counter 1) ".json"))))
+    (spit
+      (str @filepath (str "backup-" @backup-counter ".json"))
+      (encode (read-default-config))))
   (swap! backup-counter inc))
 
 (defn saveconfig
   ([]
    (backup-config)
-   (spit (io/resource "config.json") (encode @cfg)))
+   (spit (str @filepath "config.json") (encode @cfg)))
   ([filename]
-   (spit (str "custom-config/" filename ".json") (encode @cfg))))
+   (spit (str @filepath (str @filename ".json")) (encode @cfg))))
 
 (defresource status
   :allowed-methods [:get]
@@ -169,4 +175,8 @@
   (handler/api app-routes))
 
 (defn -main [& args]
+  (if (and
+       args
+       (= (count args) 1))
+      (reset! filepath (first args)))
   (run-jetty app {:port 7000 :join? false}))
