@@ -34,7 +34,7 @@ construct a basic REST-based web service.
 ###Docker###
 
 There is a Docker file, if you use that you don't need to read the section below about "running"
-the application / service.
+the application / service.  You should, however take a look at the file README-Docker.md
 
 ###Standalone#########
 
