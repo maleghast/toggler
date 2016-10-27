@@ -31,19 +31,29 @@ construct a basic REST-based web service.
 
 ##Just Using it...##
 
+###Docker###
+
+There is a Docker file, if you use that you don't need to read the section below about "running"
+the application / service.  You should, however take a look at the file README-Docker.md
+
+###Standalone#########
+
 If you grab a release and all you want to be worried about is having Java on the machine
 you are going to run it on, then grab a "standalone" jar and run it like this:
 
-java -jar toggler-1.0.0-standalone.jar
+java -jar toggler-[version number]-standalone.jar [/absolute/path/to/config/]
 
 and the embedded Jetty will spin up on port 7000.
 
 The releases were created on a machine running Java 1.8, I haven't tested them on 1.7 or
 lower and make no guarantees that they will work.
 
-The service has an embedded example config, just so that the application has some example
-"toggles" for you to play with.  All you need to do is write your own config in valid
-JSON in the same structure and then PUT it to the service on the /reconfigure endpoint.
+The service has an example config, just so that the application has some example
+"toggles" for you to play with.  It is in the root of the project "config.json" - you should
+move it to a disk location that will be writable by the running application.
+
+All you need to do is write your own config in valid JSON in the same structure and then PUT
+it to the service on the /reconfigure endpoint.
 
 ##Messing and modifying##
 
@@ -60,18 +70,19 @@ You will need [Leiningen][1] 1.7.0 or above installed, and Java 1.7 or 1.8.
 
 To start the application using Jetty, without compiling the code into a .jar, simply run:
 
-    lein run
+    lein run [/absolute/path/to/config/]
 
 If you want to run the .jar and have no interest in installing Clojure, Leiningen etc, try:
 
-    java -jar toggler-1.x.x-standalone.jar
+    java -jar toggler-[version number]-standalone.jar [/absolute/path/to/config/]
 
 ##Using the Service##
 
-I recommend [Postman][2], but grab the REST Client of your choice
+I recommend [Postman][2] and [Insomnia][3], but grab the REST Client of your choice
 and poke the API:
 
 [2]: https://www.getpostman.com/
+[3]: https://insomnia.rest/
 
     GET http://127.0.0.1:7000/toggle
 
@@ -87,5 +98,6 @@ and get the value of the "cache" feature toggle in "app1"
 
 You can see where this is going, I hope...
 
-There are PUT and POST options to add new components and toggles, have a play around with it.
+There are PUT and POST options to add new components and toggles, and to save your new / current
+config, even to load other configs have a play around with it, that's the best way to explore.
 
