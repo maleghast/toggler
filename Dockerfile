@@ -5,7 +5,7 @@ RUN mkdir /code
 RUN mkdir /code/toggler-configs
 
 ADD ./config.json /code/toggler-configs
-ADD ./target/toggler-1.1.4-standalone.jar /code
+ADD ./target/toggler-1.1.5-standalone.jar /code
 ADD ./docker/run-toggler.sh /code
 
 RUN chmod +x /code/run-toggler.sh
