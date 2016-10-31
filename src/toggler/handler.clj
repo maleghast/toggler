@@ -57,7 +57,25 @@
    (backup-config)
    (spit (str @filepath "config.json") (encode @cfg)))
   ([filename]
-   (spit (str @filepath (str @filename ".json")) (encode @cfg))))
+   (spit (str @filepath (str filename ".json")) (encode @cfg))))
+
+(defn only-files
+  "Filter a sequence of files/directories by the .isFile property of
+  java.io.File"
+  [file-s]
+  (filter #(.isFile %) file-s))
+
+(defn file-names
+  "Return the .getName property of a sequence of files"
+  [file-s]
+  (map #(.getName %) file-s))
+
+(defn getconfigs
+  ([]
+   (->> (file-seq (clojure.java.io/file @filepath))
+        (only-files)
+        (file-names)
+        (vec))))
 
 (defresource status
   :allowed-methods [:get]
@@ -149,10 +167,16 @@
   :post! (fn [_] (reset-cfg filename))
   :handle-ok (encode {:filename filename}) )
 
+(defresource get-configs
+ :allowed-methods [:get]
+ :available-media-types ["application/json"]
+ :handle-ok (fn [_] (encode (getconfigs))))
+
 (defroutes app-routes
   (GET "/" [] status)
   (PUT "/reconfigure" {body :body} (let [bodydecoded (decode (slurp body) true)]
                                      (reconfigure bodydecoded)))
+  (GET "/configs" [] get-configs)
   (PUT "/reset" [] reset-config)
   (POST "/reset" {body :body} (let [bodydecoded (decode (slurp body) true)]
                                (load-config-from-file (get bodydecoded :filename))))
