@@ -5,7 +5,8 @@
             [liberator.core :refer [resource defresource]]
             [cheshire.core :refer :all]
             [ring.adapter.jetty :refer (run-jetty)]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [clojure.string :as str])
   (:gen-class))
 
 (def backup-counter (atom 0))
@@ -70,11 +71,17 @@
   [file-s]
   (map #(.getName %) file-s))
 
+(defn remove-suffix
+  "return a filelist without the file suffices"
+  [file-s]
+  (map #(str/join "." (drop-last (str/split (str %) #"\."))) file-s))
+
 (defn getconfigs
   ([]
    (->> (file-seq (clojure.java.io/file @filepath))
         (only-files)
         (file-names)
+        (remove-suffix)
         (vec))))
 
 (defresource status
