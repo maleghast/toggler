@@ -11,7 +11,7 @@
 
 (def backup-counter (atom 0))
 
-(def filepath (atom "/code/toggler-configs/"))
+(def filepath (atom "./"))
 
 (defn read-default-config []
   (decode (slurp (str @filepath "config.json")) true))
