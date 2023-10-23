@@ -1,6 +1,6 @@
-#Toggler#
+# Toggler [![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/maleghast5033/toggler)
 
-##A Feature Toggle Micro Service written in Clojure##
+## A Feature Toggle Micro Service written in Clojure ##
 
 A few years ago, when I was contracting at the BBC I came across a feature of their
 "Forge" platform called Flagpoles.  These Flagpoles were supposed to be used to
@@ -29,14 +29,14 @@ I offer it here as a reminder of how versatile Clojure is as a language,
 and as what is I hope a reasonably good example of how to use Clojure and Liberator to
 construct a basic REST-based web service.
 
-##Just Using it...##
+## Just Using it... ##
 
-###Docker###
+### Docker ###
 
 There is a Docker file, if you use that you don't need to read the section below about "running"
 the application / service.  You should, however take a look at the file README-Docker.md
 
-###Standalone#########
+### Standalone ###
 
 If you grab a release and all you want to be worried about is having Java on the machine
 you are going to run it on, then grab a "standalone" jar and run it like this:
@@ -55,18 +55,18 @@ move it to a disk location that will be writable by the running application.
 All you need to do is write your own config in valid JSON in the same structure and then PUT
 it to the service on the /reconfigure endpoint.
 
-##Messing and modifying##
+## Messing and modifying ##
 
 Please feel absolutely free to grab the source, play around with it and modify it to your
 heart's content, see below for what you will need.
 
-##Prerequisites##
+## Prerequisites ##
 
 You will need [Leiningen][1] 1.7.0 or above installed, and Java 1.7 or 1.8.
 
 [1]: https://github.com/technomancy/leiningen
 
-##Running##
+## Running ##
 
 To start the application using Jetty, without compiling the code into a .jar, simply run:
 
@@ -76,7 +76,7 @@ If you want to run the .jar and have no interest in installing Clojure, Leininge
 
     java -jar toggler-[version number]-standalone.jar [/absolute/path/to/config/]
 
-##Using the Service##
+## Using the Service ##
 
 I recommend [Postman][2] and [Insomnia][3], but grab the REST Client of your choice
 and poke the API:
